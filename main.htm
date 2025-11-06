@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отдел кадров</title>
+    <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+    <header>
+        <h1>Сотрудники предприятия</h1>
+    </header>
+
+    <section id="filters">
+        <div>
+            <label for="reportPeriod">Отчетный период:</label>
+            <input type="date" id="startDate"> —
+            <input type="date" id="endDate">
+            <button onclick="loadReport()">Показать</button>
+        </div>
+
+        <div>
+            <label for="contractEndDate">Контракты до даты:</label>
+            <input type="date" id="contractEndDate">
+            <button onclick="loadExpiringContracts()">Показать</button>
+        </div>
+
+        <div>
+            <label for="hireDate">Приняты после:</label>
+            <input type="date" id="hireDate">
+            <button onclick="loadRecentHires()">Показать</button>
+        </div>
+    </section>
+
+    <section id="alerts"></section>
+
+    <section id="employeeList">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ф.И.О.</th>
+                    <th>Отдел</th>
+                    <th>Должность</th>
+                    <th>Начало работы</th>
+                    <th>Увольнение</th>
+                    <th>Тип договора</th>
+                    <th>Срок действия</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+                <!-- Данные из БД -->
+            </tbody>
+        </table>
+    </section>
+
+    <script src="scriptmain.js"></script>
+</body>
+</html>
