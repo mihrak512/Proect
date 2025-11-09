@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Контракты</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="fade-in">
+    <nav>
+      <a href="index.html" class="main-btn">🏠 Главная</a>
+    </nav>
+  </header>
+
+  <section class="fade-in delay-1">
+    <h2>Контракты, заканчивающиеся до даты</h2>
+    <input type="date" id="contractEndDate">
+    <button onclick="loadExpiringContracts()">Показать</button>
+    <table>
+      <thead>
+        <tr><th>Ф.И.О.</th><th>Срок контракта</th></tr>
+      </thead>
+      <tbody id="contractsTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="background.js"></script>
+  <script src="script-contracts.js"></script>
+</body>
+</html>

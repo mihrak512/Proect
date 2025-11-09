@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Отчет</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="fade-in">
+    <nav>
+      <a href="index.html" class="main-btn">🏠 Главная</a>
+    </nav>
+  </header>
+
+  <section class="fade-in delay-1">
+    <h2>Отчет по сотрудникам</h2>
+    <input type="date" id="startDate"> —
+    <input type="date" id="endDate">
+    <button onclick="loadReport()">Показать</button>
+    <table>
+      <thead>
+        <tr><th>Ф.И.О.</th><th>Отдел</th></tr>
+      </thead>
+      <tbody id="reportTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="background.js"></script>
+  <script src="script-report.js"></script>
+</body>
+</html>
