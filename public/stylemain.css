@@ -104,3 +104,26 @@ body {
       transform: translateY(0);
     }
   }
+  /* Выделенная кнопка входа */
+.login-button-container {
+    text-align: center;
+    margin: 40px 0 20px;
+  }
+  
+  .login-btn {
+    display: inline-block;
+    padding: 25px 50px;
+    font-size: 22px;
+    font-weight: bold;
+    background-color: #004d40;
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, background 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background-color: #00695c;
+    transform: scale(1.05);
+  }

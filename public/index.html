@@ -13,16 +13,25 @@
   </header>
 
   <section class="fade-in delay-1">
-    <p>Добро пожаловать! Выберите нужную функцию:</p>
-    <div class="main-buttons">
+    <p>Добро пожаловать! Для доступа к функциям войдите в систему:</p>
+
+    <!-- Кнопка входа -->
+    <div class="login-button-container fade-in delay-2" id="loginBlock">
+      <a href="login.html" class="login-btn">🔐 Войти в систему</a>
+    </div>
+
+    <!-- Основные кнопки -->
+    <div class="main-buttons fade-in delay-3" id="mainButtons" style="display: none;">
       <a href="report.html" class="main-btn">📊 Отчетный период</a>
       <a href="contracts.html" class="main-btn">📅 Контракты до даты</a>
       <a href="hires.html" class="main-btn">👥 Принятые после даты</a>
       <a href="expiring.html" class="main-btn">⏳ Истекающие контракты</a>
       <a href="departments.html" class="main-btn">🏢 По отделам</a>
+      <button onclick="logout()">🚪 Выйти</button>
     </div>
   </section>
 
   <script src="background.js"></script>
+  <script src="script-index.js"></script>
 </body>
 </html>

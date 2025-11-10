@@ -37,3 +37,20 @@ function animate() {
 }
 
 animate();
+// Проверка входа при загрузке страницы
+window.addEventListener('DOMContentLoaded', () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+      document.getElementById('mainButtons').style.display = 'flex';
+      document.getElementById('loginBlock').style.display = 'none';
+    } else {
+      document.getElementById('mainButtons').style.display = 'none';
+      document.getElementById('loginBlock').style.display = 'block';
+    }
+  });
+  
+  function logout() {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userRole');
+    location.reload();
+  }
