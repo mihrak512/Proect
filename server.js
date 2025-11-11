@@ -8,7 +8,7 @@ const db = new sqlite3.Database('./db.sqlite');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 🔐 Авторизация
+// 🔐 Авторизация (пока простая проверка по массиву)
 const users = [
   { username: 'admin', password: 'admin123', role: 'admin' },
   { username: 'ivan', password: 'ivan123', role: 'employee' },
@@ -17,7 +17,9 @@ const users = [
 
 app.post('/api/login', (req, res) => {
   const { username, password, role } = req.body;
-  const user = users.find(u => u.username === username && u.password === password && u.role === role);
+  const user = users.find(
+    u => u.username === username && u.password === password && u.role === role
+  );
   res.json({ success: !!user });
 });
 
@@ -91,7 +93,36 @@ app.get('/api/hired-by-department', (req, res) => {
   );
 });
 
+// 🌐 Маршруты страниц
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'start.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/index', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // 🚀 Запуск сервера
-app.listen(3000, () => {
-  console.log('Сервер запущен на http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
+});
+app.get('/api/report', (req, res) => {
+  const { start, end } = req.query;
+  db.all(
+    `SELECT e.full_name, d.name AS department
+     FROM employees e
+     JOIN departments d ON e.department_number = d.department_number
+     WHERE e.hire_date BETWEEN ? AND ?
+     ORDER BY e.hire_date ASC`,
+    [start, end],
+    (err, rows) => {
+      if (err) return res.status(500).send(err.message);
+      res.json(rows);
+    }
+  );
 });

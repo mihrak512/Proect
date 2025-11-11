@@ -1,56 +1,21 @@
-const canvas = document.getElementById('backgroundCanvas');
-const ctx = canvas.getContext('2d');
-canvas.style.position = 'fixed';
-canvas.style.top = 0;
-canvas.style.left = 0;
-canvas.style.zIndex = -1;
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let circles = [];
-
-for (let i = 0; i < 25; i++) {
-  circles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 30 + 10,
-    dx: (Math.random() - 0.5) * 0.3,
-    dy: (Math.random() - 0.5) * 0.3,
-    color: `rgba(0, 150, 136, ${Math.random() * 0.4 + 0.2})`
-  });
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  circles.forEach(c => {
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-    ctx.fillStyle = c.color;
-    ctx.fill();
-    c.x += c.dx;
-    c.y += c.dy;
-
-    if (c.x < 0 || c.x > canvas.width) c.dx *= -1;
-    if (c.y < 0 || c.y > canvas.height) c.dy *= -1;
-  });
-  requestAnimationFrame(animate);
-}
-
-animate();
-// Проверка входа при загрузке страницы
 window.addEventListener('DOMContentLoaded', () => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
-      document.getElementById('mainButtons').style.display = 'flex';
-      document.getElementById('loginBlock').style.display = 'none';
-    } else {
-      document.getElementById('mainButtons').style.display = 'none';
-      document.getElementById('loginBlock').style.display = 'block';
-    }
-  });
-  
-  function logout() {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userRole');
-    location.reload();
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const loginBlock = document.getElementById('loginBlock');
+  const mainButtons = document.getElementById('mainButtons');
+
+  if (isLoggedIn === 'true') {
+    // Пользователь авторизован → показываем функции
+    loginBlock.style.display = 'none';
+    mainButtons.style.display = 'flex';
+  } else {
+    // Пользователь не авторизован → только кнопка входа
+    loginBlock.style.display = 'block';
+    mainButtons.style.display = 'none';
   }
+});
+
+function logout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userRole');
+  location.reload();
+}

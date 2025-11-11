@@ -15,7 +15,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
       if (data.success) {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userRole', role);
-        window.location.href = 'index.html';
+        window.location.href = 'main.html';
       } else {
         document.getElementById('loginMessage').textContent = 'Неверный логин или пароль';
       }
