@@ -9,7 +9,7 @@ function loadRecentHires() {
         data.forEach(emp => {
           tbody.innerHTML += `
             <tr>
-              <td>${emp.name}</td>
+              <td>${emp.full_name}</td>
               <td>${emp.hire_date}</td>
             </tr>`;
         });

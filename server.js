@@ -49,17 +49,14 @@ app.get('/api/contracts', (req, res) => {
   );
 });
 
-// ⏳ Контракты, истекающие менее чем через месяц
+// 📅 Контракты, истекающие в течение месяца
 app.get('/api/expiring-soon', (req, res) => {
-  const now = new Date();
-  const oneMonthLater = new Date();
-  oneMonthLater.setMonth(now.getMonth() + 1);
-  const today = now.toISOString().split('T')[0];
-  const limit = oneMonthLater.toISOString().split('T')[0];
-
   db.all(
-    `SELECT * FROM employees WHERE contract_end BETWEEN ? AND ?`,
-    [today, limit],
+    `SELECT e.full_name, e.position, e.phone, e.contract_end
+     FROM employees e
+     WHERE e.contract_end BETWEEN date('now') AND date('now', '+1 month')
+     ORDER BY e.contract_end ASC`,
+    [],
     (err, rows) => {
       if (err) return res.status(500).send(err.message);
       res.json(rows);

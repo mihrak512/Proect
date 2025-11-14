@@ -25,7 +25,7 @@ async function loadByDepartment() {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${emp.full_name}</td>
-        <td>${emp.department}</td>
+        <td>${emp.department_number}</td>
         <td>${emp.position}</td>
         <td>${emp.hire_date}</td>
       `;
