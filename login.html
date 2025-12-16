@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Авторизация</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="fade-in">
+    <h1>Вход в систему</h1>
+  </header>
+
+  <section class="fade-in delay-1">
+    <form id="loginForm">
+      <label for="role">Роль:</label>
+      <select id="role">
+        <option value="employee">Сотрудник</option>
+        <option value="admin">Админ</option>
+      </select><br><br>
+
+      <label for="username">Логин:</label>
+      <input type="text" id="username" required><br><br>
+
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" required><br><br>
+
+      <button type="submit">Войти</button>
+    </form>
+    <p id="loginMessage"></p>
+  </section>
+
+  <script src="background.js"></script>
+  <script src="script-login.js"></script>
+</body>
+</html>

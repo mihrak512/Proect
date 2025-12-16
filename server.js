@@ -8,7 +8,7 @@ const db = new sqlite3.Database('./db.sqlite');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 🔐 Авторизация (пока простая проверка по массиву)
+//  Авторизация (пока простая проверка по массиву)
 const users = [
   { username: 'admin', password: 'admin123', role: 'admin' },
   { username: 'ivan', password: 'ivan123', role: 'employee' },
@@ -23,7 +23,7 @@ app.post('/api/login', (req, res) => {
   res.json({ success: !!user });
 });
 
-// 📊 Отчетный период
+//  Отчетный период
 app.get('/api/report', (req, res) => {
   const { start, end } = req.query;
   db.all(
@@ -36,7 +36,7 @@ app.get('/api/report', (req, res) => {
   );
 });
 
-// 📅 Контракты до даты
+//  Контракты до даты
 app.get('/api/contracts', (req, res) => {
   const { until } = req.query;
   db.all(
@@ -49,7 +49,7 @@ app.get('/api/contracts', (req, res) => {
   );
 });
 
-// 📅 Контракты, истекающие в течение месяца
+//  Контракты, истекающие в течение месяца
 app.get('/api/expiring-soon', (req, res) => {
   db.all(
     `SELECT e.full_name, e.position, e.phone, e.contract_end
@@ -64,7 +64,7 @@ app.get('/api/expiring-soon', (req, res) => {
   );
 });
 
-// 👥 Принятые после даты
+//  Принятые после даты
 app.get('/api/hires', (req, res) => {
   const { after } = req.query;
   db.all(
@@ -77,7 +77,7 @@ app.get('/api/hires', (req, res) => {
   );
 });
 
-// 🏢 Принятые по отделам после даты
+//  Принятые по отделам после даты
 app.get('/api/hired-by-department', (req, res) => {
   const { after } = req.query;
   db.all(
@@ -90,7 +90,7 @@ app.get('/api/hired-by-department', (req, res) => {
   );
 });
 
-// 🌐 Маршруты страниц
+//  Маршруты страниц
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'start.html'));
 });
@@ -103,7 +103,7 @@ app.get('/index', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 🚀 Запуск сервера
+//  Запуск сервера
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
@@ -120,6 +120,22 @@ app.get('/api/report', (req, res) => {
     (err, rows) => {
       if (err) return res.status(500).send(err.message);
       res.json(rows);
+    }
+  );
+});
+app.get('/api/my-contract', (req, res) => {
+  const { id } = req.query;
+  db.get(
+    `SELECT c.*, e.full_name, e.position, d.name AS department
+     FROM contracts c
+     JOIN employees e ON c.employee_id = e.id
+     LEFT JOIN departments d ON e.department_number = d.id
+     WHERE c.employee_id = ?`,
+    [id],
+    (err, row) => {
+      if (err) return res.status(500).send(err.message);
+      if (!row) return res.status(404).json({ error: 'Контракт не найден' });
+      res.json(row);
     }
   );
 });

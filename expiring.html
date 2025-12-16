@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Истекающие контракты</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="fade-in">
+    <nav>
+      <a href="main.html" class="main-btn">🏠 Главная</a>
+    </nav>
+  </header>
+
+  <section class="fade-in delay-1">
+    <h2>Контракты, истекающие менее чем через месяц</h2>
+    <button onclick="loadExpiringSoon()">Показать</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Ф.И.О.</th>
+          <th>Должность</th>
+          <th>Телефон</th>
+          <th>Срок окончания</th>
+        </tr>
+      </thead>
+      <tbody id="expiringTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="background.js"></script>
+  <script src="script-expiring.js"></script>
+</body>
+</html>

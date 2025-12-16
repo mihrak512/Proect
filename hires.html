@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Принятые</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="fade-in">
+    <nav>
+      <a href="main.html" class="main-btn">🏠 Главная</a>
+    </nav>
+  </header>
+
+  <section class="fade-in delay-1">
+    <h2>Сотрудники, принятые после даты</h2>
+    <input type="date" id="hireDate">
+    <button onclick="loadRecentHires()">Показать</button>
+    <table>
+      <thead>
+        <tr><th>Ф.И.О.</th><th>Дата приема</th></tr>
+      </thead>
+      <tbody id="hiresTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="background.js"></script>
+  <script src="script-hires.js"></script>
+</body>
+</html>

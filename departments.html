@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>По отделам</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+  <header class="fade-in">
+    <nav>
+      <a href="main.html" class="main-btn">🏠 Главная</a>
+    </nav>
+  </header>
+
+  <section class="fade-in delay-1">
+    <h2>Сотрудники по отделам, принятые после даты</h2>
+    <input type="date" id="hireDate">
+    <button onclick="loadByDepartment()">Показать</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Ф.И.О.</th>
+          <th>Отдел</th>
+          <th>Должность</th>
+          <th>Дата приема</th>
+        </tr>
+      </thead>
+      <tbody id="departmentTableBody"></tbody>
+    </table>
+  </section>
+
+  <script src="background.js"></script>
+  <script src="script-departments.js"></script>
+</body>
+</html>

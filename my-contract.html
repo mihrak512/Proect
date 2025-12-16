@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Мой контракт</title>
+  <link rel="stylesheet" href="stylemain.css">
+</head>
+<body>
+  <header>
+    <h1>📑 Мой контракт</h1>
+  </header>
+
+  <section>
+    <div id="contractInfo">Загрузка...</div>
+    <a href="main.html" class="main-btn">⬅ Назад</a>
+  </section>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const employeeId = params.get('id');
+
+    fetch(`/api/my-contract?id=${employeeId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('contractInfo').textContent = data.error;
+          return;
+        }
+
+        document.getElementById('contractInfo').innerHTML = `
+          <p><strong>ФИО:</strong> ${data.full_name}</p>
+          <p><strong>Должность:</strong> ${data.position}</p>
+          <p><strong>Отдел:</strong> ${data.department || '—'}</p>
+          <p><strong>Тип контракта:</strong> ${data.type}</p>
+          <p><strong>Срок действия:</strong> ${data.start_date} — ${data.end_date}</p>
+          <p><strong>Зарплата:</strong> ${data.salary} BYN</p>
+          <p><strong>Телефон:</strong> ${data.phone}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+        `;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('contractInfo').textContent = 'Ошибка загрузки контракта';
+      });
+  </script>
+</body>
+</html>
