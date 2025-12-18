@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Мой отчет</title>
+  <link rel="stylesheet" href="stylemain.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { margin-bottom: 20px; }
+    form { margin-bottom: 20px; }
+    label { margin-right: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+    .error { color: red; margin-top: 10px; }
+    .warning { color: #b22222; font-weight: bold; margin-top: 15px; }
+  </style>
+</head>
+<body>
+    
+  <header>
+    <h1>📊 Мой отчет</h1>
+  </header>
+
+  <section>
+    <form id="reportForm">
+      <label>Начало периода:
+        <input type="date" id="start" required>
+      </label>
+      <label>Окончание периода:
+        <input type="date" id="end" required>
+      </label>
+      <label>Тип отчета:
+        <select id="type">
+          <option value="salary">Зарплата и статус контракта</option>
+          <option value="contract">Сводка по контракту</option>
+        </select>
+      </label>
+      <button type="submit">Сформировать</button>
+    </form>
+
+    <div id="reportResult">Здесь появится отчет...</div>
+    <div id="reportError" class="error"></div>
+
+    <a href="main.html" class="main-btn">⬅ Назад</a>
+  </section>
+
+  <script>
+    function getEmployeeId() {
+      const p = new URLSearchParams(window.location.search);
+      const idFromUrl = p.get('id');
+      const idFromStorage = localStorage.getItem('employeeId');
+      console.log('EmployeeId из URL:', idFromUrl, 'из localStorage:', idFromStorage);
+      return idFromUrl || idFromStorage || '';
+    }
+
+    function renderSalaryReport(data) {
+      const active = data.salary_summary.active_contract_in_period ? 'Да' : 'Нет';
+      return `
+        <h3>Отчет: Зарплата и статус контракта</h3>
+        <table>
+          <tr><th>Период</th><td>${data.period.start} — ${data.period.end} (${data.period.days} дн.)</td></tr>
+          <tr><th>Базовая зарплата</th><td>${data.salary_summary.base_salary ?? '—'} BYN</td></tr>
+          <tr><th>Контракт активен в периоде</th><td>${active}</td></tr>
+        </table>
+      `;
+    }
+
+    function renderContractReport(data) {
+      const active = data.contract_summary.active_in_period ? 'Да' : 'Нет';
+      return `
+        <h3>Отчет: Сводка по контракту</h3>
+        <table>
+          <tr><th>Период</th><td>${data.period.start} — ${data.period.end} (${data.period.days} дн.)</td></tr>
+          <tr><th>Тип контракта</th><td>${data.contract_summary.type ?? '—'}</td></tr>
+          <tr><th>Начало контракта</th><td>${data.contract_summary.start_date ?? '—'}</td></tr>
+          <tr><th>Окончание контракта</th><td>${data.contract_summary.end_date ?? '—'}</td></tr>
+          <tr><th>Активен в периоде</th><td>${active}</td></tr>
+        </table>
+      `;
+    }
+
+    document.getElementById('reportForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const employeeId = getEmployeeId();
+      const start = document.getElementById('start').value;
+      const end = document.getElementById('end').value;
+      const type = document.getElementById('type').value;
+
+      if (!employeeId) {
+        document.getElementById('reportError').textContent = 'Не найден ID сотрудника. Войдите через личный кабинет.';
+        return;
+      }
+
+      document.getElementById('reportError').textContent = '';
+      document.getElementById('reportResult').innerHTML = 'Загрузка...';
+
+      fetch(`/api/my-report?id=${encodeURIComponent(employeeId)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&type=${encodeURIComponent(type)}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Ошибка запроса: ' + res.status);
+          return res.json();
+        })
+        .then(data => {
+          if (data.error) {
+            document.getElementById('reportError').textContent = data.error;
+            document.getElementById('reportResult').innerHTML = '';
+            return;
+          }
+
+          const html = type === 'contract' ? renderContractReport(data) : renderSalaryReport(data);
+          let warningHtml = '';
+          if (data.warning) {
+            warningHtml = `<p class="warning">${data.warning}</p>`;
+          }
+          document.getElementById('reportResult').innerHTML = html + warningHtml;
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('reportError').textContent = 'Ошибка загрузки отчета';
+          document.getElementById('reportResult').innerHTML = '';
+        });
+    });
+
+    // Автозаполнение текущего месяца
+    window.addEventListener('DOMContentLoaded', () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      document.getElementById('start').value = start.toISOString().slice(0, 10);
+      document.getElementById('end').value = end.toISOString().slice(0, 10);
+
+      // Автозагрузка отчета
+      document.getElementById('reportForm').dispatchEvent(new Event('submit'));
+    });
+  </script>
+</body>
+</html>

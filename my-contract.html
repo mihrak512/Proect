@@ -2,46 +2,70 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Мой контракт</title>
+  <title>Мой отчёт</title>
   <link rel="stylesheet" href="stylemain.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { margin-bottom: 20px; }
+    .error { color: red; margin-top: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
 </head>
 <body>
   <header>
-    <h1>📑 Мой контракт</h1>
+    <h1>📊 Мой отчёт</h1>
   </header>
 
   <section>
-    <div id="contractInfo">Загрузка...</div>
-    <a href="main.html" class="main-btn">⬅ Назад</a>
+    <div id="reportInfo">Загрузка...</div>
+    <div id="reportError" class="error"></div>
+    <a href="employee.html" class="main-btn">⬅ Назад</a>
   </section>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const employeeId = params.get('id');
+    const employeeId = params.get('id') || localStorage.getItem('employeeId');
 
-    fetch(`/api/my-contract?id=${employeeId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          document.getElementById('contractInfo').textContent = data.error;
-          return;
-        }
+    if (!employeeId) {
+      document.getElementById('reportError').textContent = 'Не найден ID сотрудника. Войдите через личный кабинет.';
+      document.getElementById('reportInfo').innerHTML = '';
+    } else {
+      // теперь используем /api/my-contract
+      fetch(`/api/my-contract?id=${encodeURIComponent(employeeId)}`)
+        .then(res => {
+          console.log('Ответ сервера:', res.status, res.statusText);
+          if (!res.ok) throw new Error('Ошибка запроса: ' + res.status);
+          return res.json();
+        })
+        .then(data => {
+          if (data.error) {
+            document.getElementById('reportError').textContent = data.error;
+            document.getElementById('reportInfo').innerHTML = '';
+            return;
+          }
 
-        document.getElementById('contractInfo').innerHTML = `
-          <p><strong>ФИО:</strong> ${data.full_name}</p>
-          <p><strong>Должность:</strong> ${data.position}</p>
-          <p><strong>Отдел:</strong> ${data.department || '—'}</p>
-          <p><strong>Тип контракта:</strong> ${data.type}</p>
-          <p><strong>Срок действия:</strong> ${data.start_date} — ${data.end_date}</p>
-          <p><strong>Зарплата:</strong> ${data.salary} BYN</p>
-          <p><strong>Телефон:</strong> ${data.phone}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-        `;
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('contractInfo').textContent = 'Ошибка загрузки контракта';
-      });
+          document.getElementById('reportInfo').innerHTML = `
+            <table>
+              <tr><th>ФИО</th><td>${data.full_name ?? '—'}</td></tr>
+              <tr><th>Должность</th><td>${data.position ?? '—'}</td></tr>
+              <tr><th>Отдел</th><td>${data.department ?? '—'}</td></tr>
+              <tr><th>Тип контракта</th><td>${data.type ?? '—'}</td></tr>
+              <tr><th>Начало контракта</th><td>${data.start_date ?? '—'}</td></tr>
+              <tr><th>Окончание контракта</th><td>${data.end_date ?? '—'}</td></tr>
+              <tr><th>Зарплата</th><td>${data.salary ?? '—'} BYN</td></tr>
+              <tr><th>Телефон</th><td>${data.phone ?? '—'}</td></tr>
+              <tr><th>Email</th><td>${data.email ?? '—'}</td></tr>
+            </table>
+          `;
+        })
+        .catch(err => {
+          console.error('Ошибка при запросе отчёта:', err);
+          document.getElementById('reportError').textContent = 'Ошибка загрузки отчёта: ' + (err.message || 'Неизвестная ошибка');
+          document.getElementById('reportInfo').innerHTML = '';
+        });
+    }
   </script>
 </body>
 </html>
