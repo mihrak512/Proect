@@ -25,7 +25,7 @@ async function loadReport() {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${emp.full_name}</td>
-        <td>${emp.department_number}</td>
+        <td>${emp.department ?? '—'}</td>
       `;
       tbody.appendChild(row);
     });

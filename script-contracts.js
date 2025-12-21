@@ -25,7 +25,7 @@ async function loadExpiringContracts() {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${emp.full_name}</td>
-        <td>${emp.contract_end}</td>
+        <td>${emp.end_date ?? '—'}</td>
       `;
       tbody.appendChild(row);
     });

@@ -12,12 +12,12 @@ window.addEventListener('DOMContentLoaded', () => {
     if (userRole === 'employee') {
       mainButtons.innerHTML = `
         <a href="my-contract.html?id=${employeeId}" class="main-btn">📑 Мой контракт</a>
-        <a href="my-report.html?id=${employeeId}" class="main-btn">📊 Отчет за период</a>
+        <a href="my-report.html?id=${employeeId}" class="main-btn">📊 Мой отчёт</a>
         <button onclick="logout()">🚪 Выйти</button>
       `;
     } else if (userRole === 'admin') {
       mainButtons.innerHTML = `
-        <a href="my-report.html?id=${employeeId}" class="main-btn">📊 Отчет за период</a>
+        <a href="report.html?id=${employeeId}" class="main-btn">📊 Сотрудники за период</a>
         <a href="contracts.html" class="main-btn">📅 Контракты до даты</a>
         <a href="hires.html" class="main-btn">👥 Принятые после даты</a>
         <a href="expiring.html" class="main-btn">⏳ Истекающие контракты</a>
@@ -35,5 +35,5 @@ function logout() {
   localStorage.removeItem('isLoggedIn');
   localStorage.removeItem('userRole');
   localStorage.removeItem('employeeId');
-  location.reload();
+  window.location.href = 'login.html'; // 🔑 переход на страницу авторизации
 }

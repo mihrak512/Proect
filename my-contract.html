@@ -15,24 +15,29 @@
 </head>
 <body>
   <header>
-    <h1>📊 Мой отчёт</h1>
+    <h1>📊 Мой контракт</h1>
   </header>
 
   <section>
     <div id="reportInfo">Загрузка...</div>
     <div id="reportError" class="error"></div>
-    <a href="employee.html" class="main-btn">⬅ Назад</a>
+    <a href="main.html" class="main-btn">⬅ Назад</a>
   </section>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const employeeId = params.get('id') || localStorage.getItem('employeeId');
+    let employeeId = params.get('id');
+
+    // если id отсутствует или равен "null", берём из localStorage
+    if (!employeeId || employeeId === 'null') {
+      employeeId = localStorage.getItem('employeeId');
+    }
 
     if (!employeeId) {
-      document.getElementById('reportError').textContent = 'Не найден ID сотрудника. Войдите через личный кабинет.';
+      document.getElementById('reportError').textContent =
+        'Не найден ID сотрудника. Войдите через личный кабинет.';
       document.getElementById('reportInfo').innerHTML = '';
     } else {
-      // теперь используем /api/my-contract
       fetch(`/api/my-contract?id=${encodeURIComponent(employeeId)}`)
         .then(res => {
           console.log('Ответ сервера:', res.status, res.statusText);
@@ -62,7 +67,8 @@
         })
         .catch(err => {
           console.error('Ошибка при запросе отчёта:', err);
-          document.getElementById('reportError').textContent = 'Ошибка загрузки отчёта: ' + (err.message || 'Неизвестная ошибка');
+          document.getElementById('reportError').textContent =
+            'Ошибка загрузки отчёта: ' + (err.message || 'Неизвестная ошибка');
           document.getElementById('reportInfo').innerHTML = '';
         });
     }

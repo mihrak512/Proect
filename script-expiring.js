@@ -19,7 +19,7 @@ async function loadExpiringSoon() {
         <td>${emp.full_name}</td>
         <td>${emp.position}</td>
         <td>${emp.phone}</td>
-        <td>${emp.contract_end}</td>
+        <td>${emp.end_date}</td>
       `;
       tbody.appendChild(row);
     });

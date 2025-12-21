@@ -101,31 +101,39 @@ app.get('/api/hired-by-department', (req, res) => {
   );
 });
 
-// 📑 Мой контракт
+// 📑 Мой контракт (исправленный, без вложенного app.get)
 app.get('/api/my-contract', (req, res) => {
   const { id } = req.query;
-  const employeeId = Number(id);
+  const employeeId = parseInt(req.query.id, 10);
 
-  if (!employeeId) {
-    return res.status(400).json({ error: 'Некорректный id сотрудника' });
-  }
+if (isNaN(employeeId)) {
+  return res.status(400).json({ error: 'Некорректный id сотрудника' });
+}
 
   db.get(
-    `SELECT c.*, e.full_name, e.position, d.name AS department
+    `SELECT c.id AS contract_id,
+            c.type, c.start_date, c.end_date, c.salary, c.phone, c.email,
+            e.full_name, e.position,
+            d.name AS department
      FROM contracts c
      JOIN employees e ON c.employee_id = e.id
      LEFT JOIN Departments d ON e.department_number = d.id
      WHERE c.employee_id = ?`,
     [employeeId],
     (err, row) => {
-      if (err) return res.status(500).send(err.message);
-      if (!row) return res.status(404).json({ error: 'Контракт не найден' });
+      if (err) {
+        console.error('🔥 SQL ошибка:', err.message);
+        return res.status(500).json({ error: 'Ошибка БД: ' + err.message });
+      }
+      if (!row) {
+        return res.status(404).json({ error: 'Контракт не найден' });
+      }
       res.json(row);
     }
   );
 });
 
-// 📊 Мой отчет (с защитой от пустого id и явными логами)
+// 📊 Мой отчет
 app.get('/api/my-report', (req, res) => {
   const { id, start, end, type } = req.query;
   console.log('[my-report] query:', { id, start, end, type });
@@ -135,14 +143,12 @@ app.get('/api/my-report', (req, res) => {
     return res.status(400).json({ error: 'Нужно передать корректные параметры id, start и end' });
   }
 
-  // 1) Явная проверка существования сотрудника
   db.get(`SELECT id, full_name, department_number, position FROM employees WHERE id = ?`, [employeeId], (errEmp, emp) => {
     if (errEmp) return res.status(500).json({ error: errEmp.message });
     if (!emp) {
       return res.status(404).json({ error: `Сотрудник с id=${employeeId} не найден` });
     }
 
-    // 2) Основной запрос с LEFT JOIN контракта и отдела
     const sql = `
       SELECT 
         e.id AS employee_id,
@@ -162,7 +168,6 @@ app.get('/api/my-report', (req, res) => {
     db.get(sql, [employeeId], (errRow, row) => {
       if (errRow) return res.status(500).json({ error: errRow.message });
 
-      // Дни в периоде
       const startDate = new Date(start);
       const endDate = new Date(end);
       if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
@@ -170,7 +175,6 @@ app.get('/api/my-report', (req, res) => {
       }
       const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-      // Активность контракта
       let contractActive = false;
       if (row && row.start_date && row.end_date) {
         const contractStart = new Date(row.start_date);
@@ -178,14 +182,13 @@ app.get('/api/my-report', (req, res) => {
         contractActive = !(endDate < contractStart || startDate > contractEnd);
       }
 
-      // Предупреждение: до конца контракта < 30 дней
       let warning = null;
       if (row && row.end_date) {
         const today = new Date();
         const endDateObj = new Date(row.end_date);
         const daysLeft = Math.ceil((endDateObj - today) / (1000 * 60 * 60 * 24));
         if (daysLeft > 0 && daysLeft < 30) {
-          warning = `⚠️ До окончания контракта осталось ${daysLeft} дней. Рекомендуется продлить договор или рассмотреть увольнение.`;
+          warning = `⚠️ До окончания контракта осталось ${daysLeft} дней.`;
         }
       }
 
